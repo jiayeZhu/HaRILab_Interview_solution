@@ -98,6 +98,90 @@ define({ "api": [
     "groupTitle": "User"
   },
   {
+    "type": "DELETE",
+    "url": "/api/user/:userId/attack/:attackId",
+    "title": "Delete an attack of a user",
+    "name": "DeleteAttack",
+    "group": "User",
+    "version": "0.0.1",
+    "parameter": {
+      "fields": {
+        "Path Parameter": [
+          {
+            "group": "Path Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "userId",
+            "description": "<p>unique userId.</p>"
+          },
+          {
+            "group": "Path Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "attackId",
+            "description": "<p>unique attackId.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Succeeded": [
+          {
+            "group": "Succeeded",
+            "type": "Number",
+            "optional": false,
+            "field": "errorCode",
+            "description": "<p>response error code, should be 0.</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>message to client, should be ''.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response-Example:",
+          "content": "{\n    errorCode : 0,\n    msg : ''\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Failed": [
+          {
+            "group": "Failed",
+            "type": "Number",
+            "optional": false,
+            "field": "errorCode",
+            "description": "<p>response error code, should not be 0.</p>"
+          },
+          {
+            "group": "Failed",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>error message</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response-Example:",
+          "content": "{\n  errorCode : 201,\n  msg : \"userId/attackId does not exist or not match\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "routes/users.js",
+    "groupTitle": "User"
+  },
+  {
     "type": "POST",
     "url": "/api/user/:userId/attack",
     "title": "Report new attack",
@@ -204,7 +288,7 @@ define({ "api": [
   {
     "type": "PUT",
     "url": "/api/user/:userId/attack/:attackId",
-    "title": "update an attack of a user",
+    "title": "Update an attack of a user",
     "name": "UpdateAttack",
     "group": "User",
     "version": "0.0.1",

@@ -235,6 +235,36 @@ UserRouter.put('/:userId/attack/:attackId',[
   }
 })
 
+
+/**
+ * 
+ * @api {DELETE} /api/user/:userId/attack/:attackId Delete an attack of a user
+ * @apiName DeleteAttack
+ * @apiGroup User
+ * @apiVersion  0.0.1
+ * 
+ * @apiParam  (Path Parameter) {String}     userId    unique userId.
+ * @apiParam  (Path Parameter) {String}     attackId  unique attackId.
+ * 
+ * @apiSuccess (Succeeded) {Number} errorCode   response error code, should be 0.
+ * @apiSuccess (Succeeded) {String} msg         message to client, should be ''.
+ * 
+ * @apiError   (Failed) {Number} errorCode   response error code, should not be 0.
+ * @apiError   (Failed) {String} msg         error message
+ * 
+ * @apiSuccessExample {json} Success-Response-Example:
+ * {
+ *     errorCode : 0,
+ *     msg : ''
+ * }
+ * 
+ * @apiErrorExample {json} Error-Response-Example:
+ * {
+ *   errorCode : 201,
+ *   msg : "userId/attackId does not exist or not match"
+ * }
+ * 
+ */
 UserRouter.delete('/:userId/attack/:attackId',[
   //userid should be valid mongoid
   check('userId').notEmpty().isMongoId(),
