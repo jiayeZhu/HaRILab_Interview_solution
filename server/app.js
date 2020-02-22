@@ -7,10 +7,9 @@ const compression = require('compression')
 const session = require("express-session");
 const  MongoStore  = require("connect-mongo")(session);
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://192.168.30.133:32768/harilab', {useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect('mongodb://192.168.30.133:32768/harilab', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 
 const app = express();
 

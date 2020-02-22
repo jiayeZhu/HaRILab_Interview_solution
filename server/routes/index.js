@@ -1,10 +1,16 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const UserRouter = require("./users")
+const ClinicianRouter = require('./clinician')
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  // res.render('index', { title: 'Express' });
-  res.json({errorCode:0,msg:'api root'})
-});
+/**
+ * router manager
+ */
+
+// user router
+router.use('/user/', UserRouter)
+
+// clinician router
+router.use('/clinician/',ClinicianRouter)
 
 module.exports = router;
