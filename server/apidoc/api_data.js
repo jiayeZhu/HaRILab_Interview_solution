@@ -1,6 +1,204 @@
 define({ "api": [
   {
     "type": "POST",
+    "url": "/api/clinician",
+    "title": "Create new clinician account",
+    "name": "CreatClinician",
+    "group": "Clinician",
+    "version": "0.0.1",
+    "parameter": {
+      "fields": {
+        "Body Parameter": [
+          {
+            "group": "Body Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>clinician's username.</p>"
+          },
+          {
+            "group": "Body Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>clinician's password. should already be hashed using MD5. should in lowercase.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n    username : \"JohnDoe123\",\n    password : \"d8a3d82529a5fcaad87c0b592cc46fbf\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Succeeded": [
+          {
+            "group": "Succeeded",
+            "type": "Number",
+            "optional": false,
+            "field": "errorCode",
+            "description": "<p>response error code, should be 0.</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "Object",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>message to client.</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "String",
+            "optional": false,
+            "field": "msg.clinicianId",
+            "description": "<p>clinician's unique clinicianId.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response-Example:",
+          "content": "{\n    errorCode : 0,\n    msg : {\n      clinicianId : \"5e522919db3dda5dd0224a6d\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Failed": [
+          {
+            "group": "Failed",
+            "type": "Number",
+            "optional": false,
+            "field": "errorCode",
+            "description": "<p>response error code, should not be 0.</p>"
+          },
+          {
+            "group": "Failed",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>error message</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response-Example:",
+          "content": "{\n  errorCode : 104,\n  msg : \"clinician username exist\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "routes/clinician.js",
+    "groupTitle": "Clinician"
+  },
+  {
+    "type": "POST",
+    "url": "/api/clinician/:username/session",
+    "title": "Create new clinician session",
+    "name": "CreatSession",
+    "group": "Clinician",
+    "version": "0.0.1",
+    "parameter": {
+      "fields": {
+        "Path Parameter": [
+          {
+            "group": "Path Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>clinician's username.</p>"
+          }
+        ],
+        "Body Parameter": [
+          {
+            "group": "Body Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>clinician's password. should be md5 hashed string (lowercase).</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n    password : \"d8a3d82529a5fcaad87c0b592cc46fbf\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "Succeeded": [
+          {
+            "group": "Succeeded",
+            "type": "Number",
+            "optional": false,
+            "field": "errorCode",
+            "description": "<p>response error code, should be 0.</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "Object",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>message to client.</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "String",
+            "optional": false,
+            "field": "msg.clinicianId",
+            "description": "<p>clinician's unique clinicianId.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response-Example:",
+          "content": "{\n    errorCode : 0,\n    msg : {\n      clinicianId : \"5e522919db3dda5dd0224a6d\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Failed": [
+          {
+            "group": "Failed",
+            "type": "Number",
+            "optional": false,
+            "field": "errorCode",
+            "description": "<p>response error code, should not be 0.</p>"
+          },
+          {
+            "group": "Failed",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>error message</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response-Example:",
+          "content": "{\n  errorCode : 105,\n  msg : \"clinician username password missmatch\"\n}",
+          "type": "HTTP-StatusCode"
+        }
+      ]
+    },
+    "filename": "routes/clinician.js",
+    "groupTitle": "Clinician"
+  },
+  {
+    "type": "POST",
     "url": "/api/user/:userId/session",
     "title": "Create new session",
     "name": "CreatSession",

@@ -1,10 +1,13 @@
 const {validationResult} = require('express-validator')
+const crypto = require('crypto')
 
 const codeMsgMapping = {
   0:'',
   101: 'input validation failed',
   102: 'username or UUID exist',
   103: 'userId does not exist',
+  104: 'clinician username exist',
+  105: 'clinician username password missmatch',
   201: 'userId/attackId does not exist or not match',
   202: 'the attack at that time was already reported',
   301: 'invalid search source',
@@ -21,12 +24,23 @@ function MakeResponse(res,errorCode=0,data=null){
   return res.json({errorCode,msg})
 }
 
+/**
+ * encrypt string with hmac-sha256
+ * @param {String} str string to be encrypted
+ */
+function encrypt(str){
+  const hmac = crypto.createHmac('sha256','HaRILab_Interview_secret_salt')
+  hmac.update(str)
+  return hmac.digest('hex')
+}
+
 // middleware for checking validation result
 function checkValidationResult (req,res,next){
   const validationErrors = validationResult(req)
   if(!validationErrors.isEmpty()) return MakeResponse(res,101)
   next()
 }
+
 // middleware for checking auth level.
 // user could only CRUD on his/her own data.
 // clinician could CRUD on all data.
@@ -47,4 +61,4 @@ function checkAuth(req,res,next){
   }
 }
 
-module.exports = {MakeResponse,checkValidationResult,checkAuth}
+module.exports = {MakeResponse,checkValidationResult,checkAuth,encrypt}
