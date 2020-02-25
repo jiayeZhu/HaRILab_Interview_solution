@@ -1,6 +1,7 @@
 import { RequestManagerService } from './../services/request-manager.service';
 import { InfoManagerService } from './../services/info-manager.service';
 import { Component, OnInit } from '@angular/core';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-register',
@@ -11,13 +12,15 @@ export class RegisterPage implements OnInit {
   username;
   constructor(
     private infoManager: InfoManagerService,
-    private requestManager: RequestManagerService
+    private requestManager: RequestManagerService,
+    private router: Router
   ) { }
 
   ngOnInit() {
   }
   async ionViewWillEnter() {
-
+    //check if already registered
+    // if(this.infoManager.isRegistered()) { this.router.navigate(['/tabs']) }
   }
 
   async handleSubmit() {
@@ -26,8 +29,8 @@ export class RegisterPage implements OnInit {
       uuid : this.infoManager.getUUID()
     };
     await this.infoManager.setUsername(this.username);
-    console.log(uploadingBody);
+    // console.log(uploadingBody);
     const result = await this.requestManager.newUserRegist(uploadingBody);
-    console.log(result)
+    // console.log(result)infoManagerService
   }
 }

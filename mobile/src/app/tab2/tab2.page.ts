@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {InfoManagerService} from "../services/info-manager.service";
 
 @Component({
   selector: 'app-tab2',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class Tab2Page {
 
-  constructor() {}
+  constructor(
+    private infoManager: InfoManagerService
+  ) {}
 
 }

@@ -8,7 +8,6 @@ const session = require("express-session");
 const  MongoStore  = require("connect-mongo")(session);
 const mongoose = require('mongoose')
 const cors = require("cors")
-// mongoose.connect('mongodb://192.168.30.133:32768/harilab', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const indexRouter = require('./routes/index');
 

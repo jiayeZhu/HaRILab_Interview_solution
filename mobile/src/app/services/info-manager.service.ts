@@ -29,4 +29,7 @@ export class InfoManagerService {
     this.uuid = uuid;
     return Storage.set({key: 'uuid', value: this.uuid});
   }
+  public isRegistered() {
+    return !!this.username && !!this.uuid;
+  }
 }

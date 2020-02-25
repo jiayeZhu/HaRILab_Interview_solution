@@ -27,7 +27,7 @@ initApp(app)
 async function initApp(app){
   try {
     console.log("==== connecting to DB ====")
-    await mongoose.connect('mongodb://192.168.30.133:32769/harilab', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+    await mongoose.connect('mongodb://127.0.0.1:32769/harilab', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
     console.log("===== DB connected. =====")
   } catch (error) {
     console.error("===== Failed to connect to DB =====")
