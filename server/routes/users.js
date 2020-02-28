@@ -161,7 +161,9 @@ UserRouter.post('/:userId/session',[
  * @apiSuccessExample {json} Success-Response-Example:
  * {
  *     errorCode : 0,
- *     msg : ''
+ *     msg : {
+ *         attackId: "5e50569d9c01c65ba494ee1d"
+ *     }
  * }
  * 
  * @apiErrorExample {json} Error-Response-Example:
@@ -208,7 +210,7 @@ UserRouter.post('/:userId/attack',[
   //add this attackId to user's "attacks" record for faster query
   try {
     let result = await UserModel.findByIdAndUpdate(userId,{$push:{attacks:attackId}})
-    return MakeResponse(res)
+    return MakeResponse(res,0,{attackId})
   } catch (error) {
     console.error("update user attacks record failed with error: ",error.message)
     return MakeResponse(res,999)

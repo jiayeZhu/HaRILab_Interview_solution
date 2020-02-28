@@ -6,6 +6,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Plugins } from '@capacitor/core';
 import {Router} from "@angular/router";
+import {RequestManagerService} from "./services/request-manager.service";
+import {CacheService} from "./services/cache.service";
 const { Device } = Plugins;
 
 @Component({
@@ -19,7 +21,9 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private infoManagerService: InfoManagerService,
-    private router: Router
+    private router: Router,
+    private requestManager: RequestManagerService,
+    private cache: CacheService
   ) {
     this.initializeApp();
   }
@@ -28,12 +32,14 @@ export class AppComponent {
     this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       await this.infoManagerService.init();
+      await this.cache.init();
       if (!this.infoManagerService.isRegistered()) {
-        // console.log('设备未注册');
         const {uuid} = await Device.getInfo();
-        // console.log('获取到uuid', uuid);
-        await this.infoManagerService.setUUID(uuid);
+        this.infoManagerService.uuid = uuid;
         await this.router.navigate(['/register']);
+      }else{
+        //create session
+        await this.requestManager.createSession();
       }
       this.splashScreen.hide();
     });

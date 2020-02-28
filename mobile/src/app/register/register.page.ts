@@ -26,11 +26,9 @@ export class RegisterPage implements OnInit {
   async handleSubmit() {
     const uploadingBody = {
       username : this.username,
-      uuid : this.infoManager.getUUID()
+      uuid : this.infoManager.uuid
     };
-    await this.infoManager.setUsername(this.username);
-    // console.log(uploadingBody);
-    const result = await this.requestManager.newUserRegist(uploadingBody);
-    // console.log(result)infoManagerService
+    this.infoManager.username = this.username;
+    await this.requestManager.newUserRegist(uploadingBody);
   }
 }

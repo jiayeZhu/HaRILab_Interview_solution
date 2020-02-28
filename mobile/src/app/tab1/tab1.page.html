@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Hello {{infoManager.getUsername()}}
+      Hello {{infoManager.username}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,8 +9,37 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Hello {{infoManager.getUsername()}}</ion-title>
+      <ion-title size="large">Hello {{infoManager.username}}</ion-title>
     </ion-toolbar>
   </ion-header>
 
+  <ion-item>
+    <ion-label position="floating">Attack time</ion-label>
+    <ion-datetime (ionChange)="checkAllowSubmit()" [(ngModel)]="record.Date" displayFormat="MMM D YYYY H:mm" (click)="setDateLimitation()" [min]="minDate" [max]="maxDate" value=""></ion-datetime>
+  </ion-item>
+<!--  <ion-item>-->
+<!--    <ion-label position="floating">Attack time 2</ion-label>-->
+<!--    <ion-datetime displayFormat="MMM D YYYY H:mm" min="2020-02-27T01:02:27.446-05:00" max="2020-02-28T01:02:27.446-05:00"></ion-datetime>-->
+<!--  </ion-item>-->
+<!--  <ion-item>-->
+<!--    <ion-label position="floating">Attack time 3</ion-label>-->
+<!--    <ion-datetime displayFormat="MMM D YYYY H:mm" min="2020-02-27T00:05:27.446-05:00" max="2020-02-28T00:02:27.446-05:00"></ion-datetime>-->
+<!--  </ion-item>-->
+  <ion-radio-group (ionChange)="checkAllowSubmit()" [(ngModel)]="record.location" value="">
+    <ion-list-header>
+      <ion-label>Are you in the room?</ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-label>indoor</ion-label>
+      <ion-radio slot="start" value="indoor"></ion-radio>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>outdoot</ion-label>
+      <ion-radio slot="start" value="outdoor"></ion-radio>
+    </ion-item>
+
+  </ion-radio-group>
+  <ion-button [disabled]="submitDisabled" class="ion-padding" size="large" expand="block" fill="solid" (click)="submitRecord()">Submit</ion-button>
 </ion-content>
