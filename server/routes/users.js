@@ -370,8 +370,8 @@ UserRouter.delete('/:userId/attack/:attackId',[
  * @apiParam  (Path Parameter)  {String}                      userId    unique userId.
  * @apiParam  (Query Parameter) {String}                      [from]    search attacks since this date (included).
  * @apiParam  (Query Parameter) {String}                      [to]      search attacks until this date (included).
- * @apiParam  (Query Parameter) {String="users","attacks"}    [source]  search collection source. default is "attacks" for a complete result but may be slower. "users" collection should be faster(not tested yet) but only remain records since 7 days before today.
- * 
+ * @apiParam  (Query Parameter) {String="lite","full"}        [type]    search type,default is lite. lite means only dates are returned, full means return _id, date, location
+ *
  * @apiSuccess (Succeeded) {Number}     errorCode     response error code, should be 0.
  * @apiSuccess (Succeeded) {Array}      msg           array of result attacks.
  * @apiSuccess (Succeeded) {MongoId}    msg._id       objectId of the attack record.
@@ -409,6 +409,8 @@ UserRouter.get('/:userId/attack',[
   query('from').optional().isISO8601(),
   //to shoud be valid date but noe necessary
   query('to').optional().isISO8601(),
+  //type should be in ['lite','full']
+  query('type').optional().isIn(['lite','full']),
   //check validation result
   checkValidationResult
 ],async (req,res,next)=>{
@@ -418,7 +420,7 @@ UserRouter.get('/:userId/attack',[
   //append options to the option obejct if exist
   if(req.query.from) searchEngineOption.from = req.query.from
   if(req.query.to) searchEngineOption.to = req.query.to
-  if(req.query.source) searchEngineOption.source = req.query.source
+  if(req.query.type) searchEngineOption.completeResult  = (req.query.type === 'full')
   //don't need to check user existance since the query result will be null if userId doesn't exist
   try {
     let result = await AttackSearchEngine(userId,searchEngineOption)
@@ -439,14 +441,17 @@ module.exports = UserRouter
  * @param {Date}    [option.from] search record since this date (included)
  * @param {Date}    [option.to]   search record until this date (included)
  * @param {String}  [option.source] search collection source, "users" or "attacks"
+ * @param {Boolean} [option.completeResult] default false, if set to true, will return the whole document rather then just dates
  */
 function AttackSearchEngine(userId,option){
   //check search source
   //default search source will be "attacks" collection
   //throw Error if source is not in ["attacks","users"]
-  let source = (option.source) ? (["attacks","users"].includes(option.source) ? option.source : false) : "attacks"
+  let source = (option.source) ? (["attacks","users"].includes(option.source) ? option.source : false) : "users"
   if(!source) throw Error("invalid source:"+option.source)
-  
+  //construct the selector
+  let completeResult = !! option.completeResult
+  let select = completeResult ? {_id:1, date:1, location:1} : {_id:0, date:1}
   //construct search condition object
   let searchCondition = {userId}
   //construct date limitation object
@@ -462,14 +467,14 @@ function AttackSearchEngine(userId,option){
   //return the rsult Promise
   if(source === 'attacks'){
     return AttackModel.find(searchCondition)
-                      .select({_id:1, date:1, location:1})
+                      .select(select)
                       .exec()
   }else{
     return UserModel.findById(userId)
                     .select('attacks')
                     .populate({
                       path: 'attacks',
-                      select: {_id:1, date:1, location:1},
+                      select,
                       match: {date: searchCondition.date ? searchCondition.date : {}}
                     })
                     .exec()

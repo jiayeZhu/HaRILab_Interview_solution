@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import {InfoManagerService} from "./info-manager.service";
+import {DateTime} from 'luxon';
 
-// const baseUrl = 'http://localhost:3000/api';
+// const baseUrl = 'https://jiayezhu.cn/api';
 const baseUrl = '/api'
 
 interface Response {
@@ -65,6 +66,11 @@ export class RequestManagerService {
     } else {
       this.Toast(result.msg,2000);
     }
+    return Promise.resolve(result);
+  }
+  async getWeeklyRecord(): Promise<Response>{
+    const result = await this.http.get(`${baseUrl}/user/${this.infoManager.userId}/attack?from=${DateTime.local().minus({days:7}).startOf('day').toISO()}&to=${DateTime.local().startOf('day').toISO()}`).toPromise() as Response;
+    if (result.errorCode !== 0) {this.Toast(result.msg, 2000)}
     return Promise.resolve(result);
   }
 }
