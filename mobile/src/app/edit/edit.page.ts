@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {InfoManagerService} from "../services/info-manager.service";
-import {ActivatedRoute} from "@angular/router";
-import {CacheService} from "../services/cache.service";
+import {InfoManagerService} from '../services/info-manager.service';
+import {ActivatedRoute} from '@angular/router';
+import {CacheService} from '../services/cache.service';
 import {DateTime} from 'luxon';
-import {RequestManagerService} from "../services/request-manager.service";
-import {Location} from "@angular/common";
+import {RequestManagerService} from '../services/request-manager.service';
+import {Location} from '@angular/common';
 
-const locationMapping = {"indoor":1,"outdoor":0};
+const locationMapping = {'indoor': 1,'outdoor': 0};
 
 @Component({
   selector: 'app-edit',
@@ -21,7 +21,7 @@ export class EditPage implements OnInit {
   maxDate;
   minDate;
   constructor(
-    private infoManager: InfoManagerService,
+    public infoManager: InfoManagerService,
     private route: ActivatedRoute,
     private cache: CacheService,
     private requestManager: RequestManagerService,
@@ -31,32 +31,33 @@ export class EditPage implements OnInit {
   }
 
   ngOnInit() {
-    this.idx = this.route.snapshot.paramMap.get('attackIdx')
-    this.record = {Date:new Date(this.cache.attackRecordCache[this.idx].date).toISOString(), location:this.cache.attackRecordCache[this.idx].location}
-    this.attackId = this.cache.attackRecordCache[this.idx].attackId
+    this.idx = this.route.snapshot.paramMap.get('attackIdx');
+    this.record = {Date: new Date(this.cache.attackRecordCache[this.idx].date).toISOString(),
+                   location: this.cache.attackRecordCache[this.idx].location};
+    this.attackId = this.cache.attackRecordCache[this.idx].attackId;
   }
-  checkAllowSubmit(){
+  checkAllowSubmit() {
     this.submitDisabled = !(!!this.record.Date && !!this.record.location);
   }
-  setDateLimitation(){
+  setDateLimitation() {
     this.maxDate = DateTime.local().toISO();
-    this.minDate = DateTime.local().minus({days:1}).toISO(); // can only report attack within 2 days
+    this.minDate = DateTime.local().minus({days: 1}).toISO(); // can only report attack within 2 days
   }
-  async updateRecord(){
-    const postBody = {date: new Date(this.record.Date), location: locationMapping[this.record.location]}
-    let result = await this.requestManager.updateRecord(this.attackId,postBody);
+  async updateRecord() {
+    const postBody = {date: DateTime.fromISO(this.record.Date).startOf('minute').toISO(), location: locationMapping[this.record.location]};
+    const result = await this.requestManager.updateRecord(this.attackId, postBody);
     if (result.errorCode === 0) {
-      //update the existed record in cache
+      // update the existed record in cache
       const newCache = this.cache.attackRecordCache;
-      newCache[this.idx].date = new Date(this.record.Date).toISOString();
+      newCache[this.idx].date = DateTime.fromISO(this.record.Date).startOf('minute').toISO();
       newCache[this.idx].location = this.record.location;
       this.cache.attackRecordCache = newCache;
-      this.record = {Date:null, location:null};
-      this.loc.back()
+      this.record = {Date: null, location: null};
+      this.loc.back();
     }
   }
-  async cancel(){
+  async cancel() {
     // this.record = {Date:null, location:null};
-    this.loc.back()
+    this.loc.back();
   }
 }

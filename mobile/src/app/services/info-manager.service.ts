@@ -12,7 +12,7 @@ export class InfoManagerService {
   public async init() {
     const usernameValue = await Storage.get({key: 'username'});
     const uuidValue = await Storage.get({key: 'uuid'});
-    const userIdValue = await Storage.get({key:'userId'});
+    const userIdValue = await Storage.get({key: 'userId'});
     this._username = usernameValue.value;
     this._uuid = uuidValue.value;
     this._userId = userIdValue.value;
@@ -31,7 +31,7 @@ export class InfoManagerService {
 
   set userId(value: string) {
     this._userId = value;
-    Storage.set({key: 'userId', value: this._userId})
+    Storage.set({key: 'userId', value: this._userId});
   }
 
 

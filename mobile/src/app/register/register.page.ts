@@ -1,7 +1,7 @@
 import { RequestManagerService } from './../services/request-manager.service';
 import { InfoManagerService } from './../services/info-manager.service';
 import { Component, OnInit } from '@angular/core';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -19,7 +19,7 @@ export class RegisterPage implements OnInit {
   ngOnInit() {
   }
   async ionViewWillEnter() {
-    //check if already registered
+    // check if already registered
     // if(this.infoManager.isRegistered()) { this.router.navigate(['/tabs']) }
   }
 
