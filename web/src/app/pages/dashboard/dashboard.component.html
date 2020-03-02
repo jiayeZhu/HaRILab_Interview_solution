@@ -1,5 +1,26 @@
 <div class="row">
   <nb-card>
-    <nb-card-body>Hello from ngx-admin sandbox project.</nb-card-body>
+    <nb-card-body>
+      <table [nbTreeGrid]="source">
+        <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
+        <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns" [routerLink]="'/detail/'+row.data['userId']"></tr>
+        <ng-container [nbTreeGridColumnDef]="customColumn">
+          <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>{{customColumn}}</th>
+          <td nbTreeGridCell *nbTreeGridCellDef="let row">
+            {{row.data[customColumn]}}
+          </td>
+        </ng-container>
+        <ng-container  [nbTreeGridColumnDef]="'alert (or not)'">
+          <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>alert (or not)</th>
+          <td nbTreeGridCell *nbTreeGridCellDef="let row">
+            <nb-icon *ngIf="row.data['alert (or not)']" icon="alert-triangle" status='warning'></nb-icon>
+          </td>
+        </ng-container>
+        <ng-container [nbTreeGridColumnDef]="'last time of report'">
+          <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>last time of report</th>
+          <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data['last time of report'] || '-'}}</td>
+        </ng-container>
+      </table>
+    </nb-card-body>
   </nb-card>
 </div>

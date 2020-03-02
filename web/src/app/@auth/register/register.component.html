@@ -1,0 +1,90 @@
+<h1 id="title" class="title">Register</h1>
+
+<form [formGroup]="clinicianForm" (ngSubmit)="regist()">
+
+  <div class="form-control-group">
+    <label class="label" for="input-username">Username:</label>
+    <input  nbInput
+            fullWidth
+            fieldSize="large"
+            type="text"
+            name="username"
+            id="input-username"
+            placeholder="Username"
+            autofocus
+            required="true"
+            formControlName="username"
+            (keyup)="validateInput('username')"
+            (blur)="validateInput('username')"
+            [status]="validationResult.username ? 'basic': 'danger'"
+            required>
+    <ng-container *ngIf="!validationResult.username">
+      <p class="error-message">
+        Username is required!
+      </p>
+    </ng-container>
+  </div>
+  <div class="form-control-group">
+    <label class="label" for="input-password">Password:</label>
+    <input  nbInput
+            fullWidth
+            fieldSize="large"
+            type="password"
+            name="password"
+            id="input-password"
+            placeholder="Password"
+            autofocus
+            required="true"
+            formControlName="password"
+            (keyup)="validateInput('password')"
+            (blur)="validateInput('password')"
+            [status]="validationResult.password ? 'basic': 'danger'"
+            required>
+    <ng-container *ngIf="!validationResult.password || !passwordMatched">
+      <p class="error-message" *ngIf="passwordMatched">
+        Password is required!
+      </p>
+      <p class="error-message" *ngIf="!passwordMatched">
+        Password not match
+      </p>
+    </ng-container>
+  </div>
+  <div class="form-control-group">
+    <label class="label" for="input-password-repeat">Password repeat:</label>
+    <input  nbInput
+            fullWidth
+            fieldSize="large"
+            type="password"
+            name="password-repeat"
+            id="input-password-repeat"
+            placeholder="Password repeat"
+            autofocus
+            required="true"
+            formControlName="passwordRepeat"
+            (keydown)="validateInput('passwordRepeat')"
+            (keyup)="validatePasswordRepeat();"
+            (blur)="validateInput('passwordRepeat')"
+            [status]="validationResult.passwordRepeat ? 'basic': 'danger'"
+            required>
+    <ng-container *ngIf="!validationResult.passwordRepeat || !passwordMatched">
+      <p class="error-message" *ngIf="passwordMatched">
+        Password is required!
+      </p>
+      <p class="error-message" *ngIf="!passwordMatched">
+        Password not match
+      </p>
+    </ng-container>
+  </div>
+
+  <button nbButton
+          fullWidth
+          status="success"
+          type="submit"
+          [disabled]="!clinicianForm.valid || !passwordMatched">
+    Regist
+  </button>
+</form>
+
+<section class="another-action">
+  Already have an account? <a class="text-link" routerLink="../login">Log in</a>
+</section>

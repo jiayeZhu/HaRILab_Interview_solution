@@ -1,0 +1,62 @@
+<h1 id="title" class="title">Login</h1>
+<!-- <p class="sub-title">Hello! Log in with your email.</p> -->
+
+<form [formGroup]="clinicianForm" (ngSubmit)="login()">
+
+  <div class="form-control-group">
+    <label class="label" for="input-username">Username:</label>
+    <input  nbInput
+            fullWidth
+            fieldSize="large"
+            type="text"
+            name="username"
+            id="input-username"
+            placeholder="Username"
+            autofocus
+            required="true"
+            formControlName="username"
+            (keyup)="validateInput('username')"
+            (blur)="validateInput('username')"
+            [status]="validationResult.username ? 'basic': 'danger'"
+            required>
+    <ng-container *ngIf="!validationResult.username">
+      <p class="error-message">
+        Username is required!
+      </p>
+    </ng-container>
+  </div>
+  <div class="form-control-group">
+    <label class="label" for="input-password">Password:</label>
+    <input  nbInput
+            fullWidth
+            fieldSize="large"
+            type="password"
+            name="password"
+            id="input-password"
+            placeholder="Password"
+            autofocus
+            required="true"
+            formControlName="password"
+            (keyup)="validateInput('password')"
+            (blur)="validateInput('password')"
+            [status]="validationResult.password ? 'basic': 'danger'"
+            required>
+    <ng-container *ngIf="!validationResult.password">
+      <p class="error-message">
+        Password is required!
+      </p>
+    </ng-container>
+  </div>
+
+  <button nbButton
+          fullWidth
+          status="success"
+          type="submit"
+          [disabled]="!clinicianForm.valid">
+    Login
+  </button>
+</form>
+
+<section class="another-action" aria-label="Register">
+  Don't have an account? <a class="text-link" routerLink="../register">Register</a>
+</section>

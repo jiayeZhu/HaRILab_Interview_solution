@@ -541,7 +541,7 @@
       "examples": [
         {
           "title": "Success-Response-Example:",
-          "content": "{\n    errorCode : 0,\n    msg : ''\n}",
+          "content": "{\n    errorCode : 0,\n    msg : {\n        attackId: \"5e50569d9c01c65ba494ee1d\"\n    }\n}",
           "type": "json"
         }
       ]
@@ -613,12 +613,12 @@
             "group": "Query Parameter",
             "type": "String",
             "allowedValues": [
-              "\"users\"",
-              "\"attacks\""
+              "\"lite\"",
+              "\"full\""
             ],
             "optional": true,
-            "field": "source",
-            "description": "<p>search collection source. default is &quot;attacks&quot; for a complete result but may be slower. &quot;users&quot; collection should be faster(not tested yet) but only remain records since 7 days before today.</p>"
+            "field": "type",
+            "description": "<p>search type,default is lite. lite means only dates are returned, full means return _id, date, location</p>"
           }
         ]
       }
