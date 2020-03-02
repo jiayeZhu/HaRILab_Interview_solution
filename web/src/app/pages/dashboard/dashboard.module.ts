@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
     ThemeModule,
     NbTreeGridModule,
     NbIconModule,
-    RouterModule
+    RouterModule,
   ],
   declarations: [
     DashboardComponent,

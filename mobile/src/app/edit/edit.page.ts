@@ -6,7 +6,7 @@ import {DateTime} from 'luxon';
 import {RequestManagerService} from '../services/request-manager.service';
 import {Location} from '@angular/common';
 
-const locationMapping = {'indoor': 1,'outdoor': 0};
+const locationMapping = {indoor: 1, outdoor: 0};
 
 @Component({
   selector: 'app-edit',

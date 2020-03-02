@@ -5,7 +5,7 @@ import {Location} from '@angular/common';
 @Component({
   selector: 'ngx-detail',
   templateUrl: './detail.component.html',
-  styleUrls: ['./detail.component.scss']
+  styleUrls: ['./detail.component.scss'],
 })
 export class DetailComponent implements OnInit {
   userId;
@@ -17,7 +17,7 @@ export class DetailComponent implements OnInit {
 
   ngOnInit() {
     this.userId = this.route.snapshot.paramMap.get('userId');
-    console.log(this.userId)
+    console.log(this.userId);
   }
   async cancel() {
     this.loc.back();
