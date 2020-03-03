@@ -445,41 +445,36 @@ UserRouter.get('/',[
   const page = parseInt(req.query.page)>0 ? parseInt(req.query.page) : 1;
   const pageSize = parseInt(req.query.pageSize)>0 ? parseInt(req.query.pageSize) : 10;
   const skip = (page-1)*pageSize;
+  let userCount;
+  try {
+    userCount = await UserModel.count().exec();
+  } catch (error) {
+    console.error("count user list failed with error: ",error.message)
+    MakeResponse(res,999);
+  }
   try {
     const result = await UserModel.aggregate([
-      {
-        $project: {attacks: 1, username: 1}
-      }, {
-        $lookup: {from: 'attacks', 
-          localField: 'attacks', 
-          foreignField: '_id', 
-          as: 'attacks'
-        }
-      }, {
-        $unwind: {path: '$attacks', preserveNullAndEmptyArrays: true}
-      }, {
-        $project: {'attacks.date': 1, 'username': 1}
-      }, {
-        $group: {_id: '$_id', lastAttack: {$max: '$attacks.date'}}
-      }, {
-        $addFields: {
-          isNull: {
-            $eq: [
-              '$lastAttack', null
-            ]
-          }
-        }
-      }, {
-        $sort: {isNull: 1, lastAttack: 1}
-      }, {
-        $skip: skip
-      }, {
-        $limit: pageSize
-      },{
-        $project: {lastAttack:1}
-      }
+      {$project: {'attacks':1,'username':1}},
+      {$lookup: {
+        from: 'attacks',
+        localField: 'attacks',
+        foreignField: '_id',
+        as: 'attacks'
+      }},
+      {$addFields: {lastAttack: {$max:"$attacks.date"}}},
+      {$project: {username:1,lastAttack:1}},
+      {$addFields: {isNull: {$eq:['$lastAttack',null]}}}, 
+      {$sort: {
+        'isNull':1,
+        'lastAttack': 1,
+        'username': -1
+      }},
+      {$skip: skip},
+      {$limit: pageSize},
+      {$project: {lastAttack:1, username:1}}
     ]).exec()
-    return MakeResponse(res,0,result)
+    const msg = {userList:result,userCount}
+    return MakeResponse(res,0,msg)
   } catch (error) {
     console.error("query user list failed with error: ",error.message)
     return MakeResponse(res,999)

@@ -14,7 +14,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import {
-  NbChatModule,
+  // NbChatModule,
   NbDatepickerModule,
   NbDialogModule,
   NbMenuModule,
@@ -39,9 +39,6 @@ import {
     NbDialogModule.forRoot(),
     NbWindowModule.forRoot(),
     NbToastrModule.forRoot(),
-    // NbChatModule.forRoot({
-    //   messageGoogleMapKey: 'AIzaSyA_wNuCzia92MAmdLRzmqitRGvCF7wCZPY',
-    // }),
     CoreModule.forRoot(),
     ReactiveFormsModule,
     NbEvaIconsModule,

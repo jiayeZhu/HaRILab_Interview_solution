@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
@@ -23,5 +24,11 @@ export class RequestManagerService {
   }
   async login(clinician: {username: string, password: string}): Promise<Response> {
     return this.http.post(`${baseUrl}/clinician/${clinician.username}/session`, clinician).toPromise() as Promise<Response>;
+  }
+  async getUserList(page: number): Promise<Response> {
+    return this.http.get(`${baseUrl}/user`).toPromise() as Promise<Response>;
+  }
+  getUserListRx(page: number): Observable<Response> {
+    return this.http.get(`${baseUrl}/user`) as Observable<Response>;
   }
 }

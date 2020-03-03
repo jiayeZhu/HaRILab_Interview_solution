@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
     this.validationResult[key] = this.clinicianForm.get(key).valid;
   }
   async login() {
+    // tslint:disable-next-line: prefer-const
     let {username, password} = this.clinicianForm.value;
     password = Md5.hashStr(password);
     const result = await this.requestManager.login({username, password});

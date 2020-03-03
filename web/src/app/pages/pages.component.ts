@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { MENU_ITEMS } from './pages-menu';
 import {InfoManagerService} from '../services/info-manager.service';

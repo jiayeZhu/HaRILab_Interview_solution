@@ -33,6 +33,7 @@ export class RegisterComponent  implements OnInit {
     if (this.infoManager.clinicianId) { this.router.navigate(['/dashboard']); }
   }
   async regist() {
+    // tslint:disable-next-line: prefer-const
     let {username, password} = this.clinicianForm.value;
     password = Md5.hashStr(password);
     const result = await this.requestManager.newClinicianRegist({username, password});
