@@ -82,8 +82,8 @@ export class RequestManagerService {
   }
   async getWeeklyRecord(): Promise<Response> {
     let {data} = await this.http.get(`${baseUrl}/user/${this.infoManager.userId}/attack`
-                                      + `?from=${DateTime.local().minus({days: 7}).startOf('day').toISO()}`
-                                      + `&to=${DateTime.local().startOf('day').toISO()}`, {}, {});
+                                      + `?from=${DateTime.local().minus({days: 6}).startOf('day').toISO()}`
+                                      + `&to=${DateTime.local().endOf('day').toISO()}`, {}, {});
     data = JSON.parse(data);
     if (data.errorCode !== 0) {this.Toast(data.msg, 2000); }
     return Promise.resolve(data as Response);

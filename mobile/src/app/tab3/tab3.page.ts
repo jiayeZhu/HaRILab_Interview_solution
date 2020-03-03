@@ -16,7 +16,7 @@ export class Tab3Page {
   get labels() {
     const l = [];
     for (let i = 0; i < 7; i++) {
-      l.unshift(DateTime.local().minus({days: i + 1}).toFormat('LL/dd'));
+      l.unshift(DateTime.local().minus({days: i}).toFormat('LL/dd'));
     }
     return l;
   }
