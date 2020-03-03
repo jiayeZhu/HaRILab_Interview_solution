@@ -24,5 +24,12 @@
     </nb-card-body>
   </nb-card>
 
-  <!-- <div class="spinner" [ngClass]="{ 'hidden': !loading }"></div> -->
+  <div style="display: flex; width: 100%; justify-content: center;">
+    <mat-paginator [length]="total"
+    [pageSize]="pageSize"
+    hidePageSize="true"
+    (page)="getPage($event.pageIndex+1)"></mat-paginator>
+  </div>
+  
+
 </div>

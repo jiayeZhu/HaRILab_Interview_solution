@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { NbGetters, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 import { RequestManagerService } from '../../services/request-manager.service';
-import { Observable } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import {DateTime} from 'luxon';
 
 const PAGESIZE = 10;
 
 
-interface TreeNode<T> {
-  data: T;
-  children?: TreeNode<T>[];
-  expanded?: boolean;
-}
+// interface TreeNode<T> {
+//   data: T;
+//   children?: TreeNode<T>[];
+//   expanded?: boolean;
+// }
 
 interface FSEntry {
   'username': string;
@@ -25,36 +24,25 @@ interface FSEntry {
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
-  p: number = 1;
   total: number;
-  loading: boolean;
-  asyncData: Observable<FSEntry[]>;
+  pageSize: number;
   paginate= { id: 'server', itemsPerPage: PAGESIZE, currentPage: 1, totalItems: 3 }
   customColumn = 'username';
   defaultColumns = [ 'alert (or not)', 'last time of report'];
   allColumns = ['username', 'alert (or not)', 'last time of report'];
   source: NbTreeGridDataSource<FSEntry>;
-  private data: FSEntry[] = [
-    {
-      'username': 'user 1', 'alert (or not)': true, 'last time of report': '5', userId: 'userId1',
-    },
-    {
-      'username': 'user 2', 'alert (or not)': false, 'last time of report': '400 KB', userId: 'userId2',
-    },
-    {
-      'username': 'user 3', 'alert (or not)': false, 'last time of report': '109 MB', userId: 'userId3',
-    },
-  ];
+  private data: FSEntry[] = [];
+  getters: NbGetters<FSEntry, FSEntry> = {
+    dataGetter: (node: FSEntry) => node,
+    // childrenGetter: (node: FSEntry) => node.childEntries || undefined,
+    // expandedGetter: (node: FSEntry) => !!node.expanded,
+  };
   constructor(
     dataSourceBuilder: NbTreeGridDataSourceBuilder<FSEntry>,
     private requestManager: RequestManagerService,
   ) {
-    const getters: NbGetters<FSEntry, FSEntry> = {
-      dataGetter: (node: FSEntry) => node,
-      // childrenGetter: (node: FSEntry) => node.childEntries || undefined,
-      // expandedGetter: (node: FSEntry) => !!node.expanded,
-    };
-    this.source = dataSourceBuilder.create(this.data, getters);
+    this.pageSize = PAGESIZE;
+    this.source = dataSourceBuilder.create(this.data, this.getters);
   }
   async ngOnInit() {
     // const result = await this.requestManager.getUserList(1);
@@ -63,16 +51,18 @@ export class DashboardComponent implements OnInit {
   }
 
   async getPage(page: number) {
-    this.loading = true;
-    this.asyncData = this.requestManager.getUserListRx( page).pipe(
-        tap(res => {
-            this.total = Math.ceil(res.msg.userCount / PAGESIZE);
-            this.p = page;
-            this.loading = false;
-        }),
-        map(res => res.msg.userList),
+    const result = await this.requestManager.getUserList(page);
+    this.total = result.msg.userCount;
+    this.data = result.msg.userList.map( e => {
+      const lastDate = DateTime.fromISO(e.lastAttack);
+      return ({
+        username: e.username,
+        'last time of report': lastDate.isValid ? lastDate.toLocaleString(DateTime.DATETIME_FULL) : null,
+        userId: e._id,
+        'alert (or not)': DateTime.fromISO(e.lastAttack) < DateTime.local().minus({days:2})
+      });
+      },
     );
-    let result = await this.asyncData.toPromise();
-    console.log(result)
-}
+    this.source.setData(this.data, this.getters);
+  }
 }

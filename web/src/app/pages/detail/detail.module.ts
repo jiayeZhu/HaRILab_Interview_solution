@@ -1,9 +1,9 @@
+import { DetailComponent } from './detail.component';
 import { NgModule } from '@angular/core';
 import { NbCardModule, NbTreeGridModule } from '@nebular/theme';
 import { NbIconModule } from '@nebular/theme';
 
 import { ThemeModule } from '../../@theme/theme.module';
-import { DashboardComponent } from './dashboard.component';
 import { RouterModule } from '@angular/router';
 import {MatPaginatorModule} from '@angular/material/paginator';
 
@@ -17,7 +17,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     MatPaginatorModule,
   ],
   declarations: [
-    DashboardComponent,
+    DetailComponent,
   ],
 })
-export class DashboardModule { }
+export class DetailModule { }

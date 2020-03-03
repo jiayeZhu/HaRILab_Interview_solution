@@ -21,6 +21,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.analytics.trackPageViews();
-    this.themeService.changeTheme('dark');
+    // this.themeService.changeTheme('dark');
   }
 }

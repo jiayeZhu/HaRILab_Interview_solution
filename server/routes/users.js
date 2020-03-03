@@ -371,7 +371,11 @@ UserRouter.delete('/:userId/attack/:attackId',[
  * @apiParam  (Query Parameter) {String}                      [from]    search attacks since this date (included).
  * @apiParam  (Query Parameter) {String}                      [to]      search attacks until this date (included).
  * @apiParam  (Query Parameter) {String="lite","full"}        [type]    search type,default is lite. lite means only dates are returned, full means return _id, date, location
- *
+ * @apiParam  (Query Parameter) {String="users","attacks"}    [source]  search source.
+ * @apiParam  (Query Parameter) {Int=1,0}                     [count]   return count or not.
+ * @apiParam  (Query Parameter) {Int}                         [page]    witch page
+ * @apiParam  (Query parameter) {Int}                         [pageSize]  page size, if <=0, return all records, default 0
+ * 
  * @apiSuccess (Succeeded) {Number}     errorCode     response error code, should be 0.
  * @apiSuccess (Succeeded) {Array}      msg           array of result attacks.
  * @apiSuccess (Succeeded) {MongoId}    msg._id       objectId of the attack record.
@@ -411,6 +415,14 @@ UserRouter.get('/:userId/attack',[
   query('to').optional().isISO8601(),
   //type should be in ['lite','full']
   query('type').optional().isIn(['lite','full']),
+  //source should be in ['users','attacks']
+  query('source').optional().isIn(['users','attacks']),
+  //count should be boolean
+  query('count').optional().isInt().isIn([1,0]),
+  //page should be number
+  query('page').optional().isInt(),
+  //pageSize should be number
+  query('pageSize').optional().isInt(),
   //check validation result
   checkValidationResult
 ],async (req,res,next)=>{
@@ -421,9 +433,27 @@ UserRouter.get('/:userId/attack',[
   if(req.query.from) searchEngineOption.from = req.query.from
   if(req.query.to) searchEngineOption.to = req.query.to
   if(req.query.type) searchEngineOption.completeResult  = (req.query.type === 'full')
+  if(req.query.source) searchEngineOption.source = req.query.source
+  if(req.query.count) searchEngineOption.count = (req.query.count === '1')
+  const page = parseInt(req.query.page)>0 ? parseInt(req.query.page) : 1;
+  const pageSize = parseInt(req.query.pageSize)>0 ? parseInt(req.query.pageSize) : 0;
+  if(pageSize > 0) {
+    searchEngineOption.pageSize = pageSize
+    searchEngineOption.skip = (page-1)*pageSize
+  }
+  let attackCount;
+  if(req.query.count){
+    try {
+      attackCount = await AttackModel.countDocuments({userId}).exec();
+    } catch (error) {
+      console.error("count attack list failed with error: ",error.message)
+      MakeResponse(res,999);
+    }
+  }
   //don't need to check user existance since the query result will be null if userId doesn't exist
   try {
     let result = await AttackSearchEngine(userId,searchEngineOption)
+    if (searchEngineOption.count) result = {attackList:result, count:attackCount}
     return MakeResponse(res,0,result)
   } catch (error) {
     if(error.message.includes('invalid source:')) return MakeResponse(res,301)
@@ -432,6 +462,46 @@ UserRouter.get('/:userId/attack',[
   }
 })
 
+/**
+ * 
+ * @api {GET} /api/user/ get userlist with their last attak datetime
+ * @apiName GetUserList
+ * @apiGroup User
+ * @apiVersion  0.0.1
+ * 
+ * @apiParam  (Query Parameter) {Int}                         [page]      witch page
+ * @apiParam  (Query parameter) {Int}                         [pageSize]  page size
+ * 
+ * @apiSuccess (Succeeded) {Number}     errorCode     response error code, should be 0.
+ * @apiSuccess (Succeeded) {Array}      msg           array of result attacks.
+ * @apiSuccess (Succeeded) {MongoId}    msg.userList._id         userid
+ * @apiSuccess (Succeeded) {String}     msg.userList.username    username
+ * @apiSuccess (Succeeded) {Date}       msg.userList.lastAttack  the ISO datetime of the last attack
+ * @apiSuccess (Succeeded) {Number}     msg.userCount            number of user, for pagination
+ * 
+ * @apiError   (Failed) {Number} errorCode   response error code, should not be 0.
+ * @apiError   (Failed) {String} msg         error message
+ * 
+ * @apiSuccessExample {json} Success-Response-Example:
+ * {
+ *     errorCode : 0,
+ *     msg : {
+ *       userList: [
+ *         {"_id": "5e5d309adbff884a68c66562",
+ *          "username": " qwe",
+ *          "lastAttack": "2020-02-26T22:19:28.264Z"}
+ *       ],
+ *       userCount: 37
+ *     }
+ * }
+ * 
+ * @apiErrorExample {json} Error-Response-Example:
+ * {
+ *   errorCode : 301,
+ *   msg : "invalid search source"
+ * }
+ * 
+ */
 //get userlist with last attack date
 UserRouter.get('/',[
   checkAuth,
@@ -447,7 +517,7 @@ UserRouter.get('/',[
   const skip = (page-1)*pageSize;
   let userCount;
   try {
-    userCount = await UserModel.count().exec();
+    userCount = await UserModel.countDocuments().exec();
   } catch (error) {
     console.error("count user list failed with error: ",error.message)
     MakeResponse(res,999);
@@ -491,6 +561,10 @@ module.exports = UserRouter
  * @param {Date}    [option.to]   search record until this date (included)
  * @param {String}  [option.source] search collection source, "users" or "attacks"
  * @param {Boolean} [option.completeResult] default false, if set to true, will return the whole document rather then just dates
+ * @param {Boolean} [option.count] default false, if set to true, will return like {attackList:[],count:number}
+ * @param {Int}     [option.pageSize] default 0, >0 means pagination, <=0 will return all
+ * @param {Int}     [option.skip] how many skip, default 0
+ * 
  */
 function AttackSearchEngine(userId,option){
   //check search source
@@ -513,11 +587,13 @@ function AttackSearchEngine(userId,option){
   //if there is limitation, append the limitation to the search condition object
   if(!_.isEmpty(dateLimitation))  searchCondition.date=dateLimitation
 
-  //return the rsult Promise
-  if(source === 'attacks'){
-    return AttackModel.find(searchCondition)
-                      .select(select)
-                      .exec()
+  //return the result Promise
+  if(source === 'attacks'){ //only attacks collection should be use when pagination is needed...
+    let query = AttackModel.find(searchCondition)
+                          .sort({date:-1})
+                          .select(select)
+    if (option.skip !== undefined && option.pageSize !== undefined) query = query.skip(option.skip).limit(option.pageSize)
+    return query.exec()
   }else{
     return UserModel.findById(userId)
                     .select('attacks')

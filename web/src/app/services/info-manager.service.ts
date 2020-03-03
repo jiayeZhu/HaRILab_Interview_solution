@@ -28,4 +28,8 @@ export class InfoManagerService {
     this._clinicianId = value;
     sessionStorage.setItem('clinicianUsername', value);
   }
+  clear() {
+    this.clinicianId = undefined;
+    this.clinicianUsername = undefined;
+  }
 }

@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   currentTheme = 'default';
 
-  userMenu = [ { title: 'Log out' } ];
+  userMenu = [ { title: 'Log out', link: '/auth/logout' } ];
 
   constructor(private sidebarService: NbSidebarService,
               private menuService: NbMenuService,
@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.currentTheme = 'dark';
+    this.currentTheme = 'default';
     this.themeService.changeTheme(this.currentTheme);
     this.user = {name: this.infoManager.clinicianUsername, picture: 'assets/images/nick.png'};
 

@@ -22,6 +22,7 @@ import {
   NbToastrModule,
   NbWindowModule,
 } from '@nebular/theme';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,6 +43,7 @@ import {
     CoreModule.forRoot(),
     ReactiveFormsModule,
     NbEvaIconsModule,
+    MatPaginatorModule,
   ],
   bootstrap: [AppComponent],
 })

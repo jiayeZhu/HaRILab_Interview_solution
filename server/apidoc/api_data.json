@@ -473,6 +473,120 @@
     "groupTitle": "User"
   },
   {
+    "type": "GET",
+    "url": "/api/user/",
+    "title": "get userlist with their last attak datetime",
+    "name": "GetUserList",
+    "group": "User",
+    "version": "0.0.1",
+    "parameter": {
+      "fields": {
+        "Query Parameter": [
+          {
+            "group": "Query Parameter",
+            "type": "Int",
+            "optional": true,
+            "field": "page",
+            "description": "<p>witch page</p>"
+          }
+        ],
+        "Query parameter": [
+          {
+            "group": "Query parameter",
+            "type": "Int",
+            "optional": true,
+            "field": "pageSize",
+            "description": "<p>page size</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Succeeded": [
+          {
+            "group": "Succeeded",
+            "type": "Number",
+            "optional": false,
+            "field": "errorCode",
+            "description": "<p>response error code, should be 0.</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "Array",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>array of result attacks.</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "MongoId",
+            "optional": false,
+            "field": "msg.userList._id",
+            "description": "<p>userid</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "String",
+            "optional": false,
+            "field": "msg.userList.username",
+            "description": "<p>username</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "Date",
+            "optional": false,
+            "field": "msg.userList.lastAttack",
+            "description": "<p>the ISO datetime of the last attack</p>"
+          },
+          {
+            "group": "Succeeded",
+            "type": "Number",
+            "optional": false,
+            "field": "msg.userCount",
+            "description": "<p>number of user, for pagination</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response-Example:",
+          "content": "{\n    errorCode : 0,\n    msg : {\n      userList: [\n        {\"_id\": \"5e5d309adbff884a68c66562\",\n         \"username\": \" qwe\",\n         \"lastAttack\": \"2020-02-26T22:19:28.264Z\"}\n      ],\n      userCount: 37\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Failed": [
+          {
+            "group": "Failed",
+            "type": "Number",
+            "optional": false,
+            "field": "errorCode",
+            "description": "<p>response error code, should not be 0.</p>"
+          },
+          {
+            "group": "Failed",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>error message</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response-Example:",
+          "content": "{\n  errorCode : 301,\n  msg : \"invalid search source\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "routes/users.js",
+    "groupTitle": "User"
+  },
+  {
     "type": "POST",
     "url": "/api/user/:userId/attack",
     "title": "Report new attack",
@@ -619,6 +733,44 @@
             "optional": true,
             "field": "type",
             "description": "<p>search type,default is lite. lite means only dates are returned, full means return _id, date, location</p>"
+          },
+          {
+            "group": "Query Parameter",
+            "type": "String",
+            "allowedValues": [
+              "\"users\"",
+              "\"attacks\""
+            ],
+            "optional": true,
+            "field": "source",
+            "description": "<p>search source.</p>"
+          },
+          {
+            "group": "Query Parameter",
+            "type": "Int",
+            "allowedValues": [
+              "1",
+              "0"
+            ],
+            "optional": true,
+            "field": "count",
+            "description": "<p>return count or not.</p>"
+          },
+          {
+            "group": "Query Parameter",
+            "type": "Int",
+            "optional": true,
+            "field": "page",
+            "description": "<p>witch page</p>"
+          }
+        ],
+        "Query parameter": [
+          {
+            "group": "Query parameter",
+            "type": "Int",
+            "optional": true,
+            "field": "pageSize",
+            "description": "<p>page size, if &lt;=0, return all records, default 0</p>"
           }
         ]
       }
